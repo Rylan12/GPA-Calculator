@@ -1,0 +1,200 @@
+<template>
+  <div>
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column
+        label="Class"
+        width="180">
+        <template slot-scope="scope">
+          <el-input placeholder="Class name" v-model="scope.row.name"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Level">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.level" filterable placeholder="Level">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Semester 1">
+        <template slot-scope="scope">
+          <el-input placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Semester 2">
+        <template slot-scope="scope">
+          <el-input placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label=""
+        width="50">
+        <template slot-scope="scope">
+          <el-button type="danger" icon="el-icon-minus" circle size="mini" @click="remove(scope.$index)"
+                     :disabled="tableData.length === 1"></el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="add">
+      <el-button class="add-button" type="primary" @click="add">Add Class <i class="el-icon-plus el-icon-right"></i>
+      </el-button>
+    </div>
+  </div>
+</template>
+
+<script>
+// Get the number of points to subtract from 4/4.5/5 based on grade
+function getPointValue(grade, level) {
+  let loss = 0;
+  // Convert grade to number if possible
+  grade = isNaN(Number(grade)) ? grade : Number(grade);
+  if (typeof grade === "string") {
+    grade = grade.toUpperCase();
+    switch (grade) {
+      case "A":
+        loss = 0;
+        break;
+      case "B":
+        loss = 1;
+        break;
+      case "C":
+        loss = 2;
+        break;
+      case "D":
+        loss = 3;
+        break;
+      case "F":
+        return 0;
+      default:
+        return -1;
+    }
+  } else if (typeof grade === "number") {
+    if (grade >= 89.5) {
+      loss = 0;
+    } else if (grade >= 79.5) {
+      loss = 1;
+    } else if (grade >= 69.5) {
+      loss = 2;
+    } else if (grade >= 59.5) {
+      loss = 3;
+    } else {
+      return 0;
+    }
+  }
+  return level - loss;
+}
+
+export default {
+  data() {
+    return {
+      tableData: [{
+        name: '',
+        level: '',
+        grades: ['', '']
+      }],
+      options: [{
+        value: 4,
+        label: 'Core'
+      }, {
+        value: 4.5,
+        label: 'Honors'
+      }, {
+        value: 5,
+        label: 'Advanced'
+      }],
+    }
+  },
+  methods: {
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    add() {
+      this.tableData.push({
+        name: '',
+        level: '',
+        grades: ['', '']
+      });
+    },
+    remove(index) {
+      this.tableData.splice(index, 1);
+    },
+  },
+  mounted() {
+    this.$emit("change", this.gpa);
+  },
+  computed: {
+    gpa() {
+      let weightedPoints = 0;
+      let unweightedPoints = 0;
+      let classes = 0;
+
+      // Cycle through each class
+      this.tableData.forEach(element => {
+        // Divide all point values in half if PE class
+        let multiplier = 1;
+        if (element.name === 'PE') {
+          multiplier = 0.5;
+        }
+        // Cycle through each semester
+        element.grades.forEach(grade => {
+          // Continue if grade is blank
+          if (grade === "") {
+            return;
+          }
+          // Add class and point value
+          classes += multiplier;
+          weightedPoints += getPointValue(grade, element.level) * multiplier;
+          unweightedPoints += getPointValue(grade, 4) * multiplier;
+        });
+      });
+
+      // Make sure classes are entered (to avoid dividing by 0)
+      if (classes !== 0) {
+        let gpa = [
+          (Math.round(weightedPoints / classes * 1000) / 1000),
+          (Math.round(unweightedPoints / classes * 1000) / 1000)
+        ];
+        console.log(gpa);
+        return gpa
+      }
+
+      // Return empty if no classes
+      console.log("None");
+      return [null, null];
+    },
+  },
+  watch: {
+    gpa() {
+      this.$emit("change", this.gpa);
+    },
+  },
+}
+</script>
+
+<style scoped>
+.add-button {
+  margin-right: 12px;
+}
+
+.add {
+  float: right;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.el-icon-right {
+  padding-left: 12px;
+}
+</style>
