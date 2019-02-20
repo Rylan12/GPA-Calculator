@@ -7,32 +7,48 @@
         label="Class"
         width="180">
         <template slot-scope="scope">
-          <el-input placeholder="Class name" v-model="scope.row.name"></el-input>
+          <el-form>
+            <el-form-item>
+              <el-input placeholder="Class name" v-model="scope.row.name"></el-input>
+            </el-form-item>
+          </el-form>
         </template>
       </el-table-column>
       <el-table-column
         label="Level">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.level" filterable placeholder="Level">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-form>
+            <el-form-item>
+              <el-select v-model="scope.row.level" filterable placeholder="Level">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
         </template>
       </el-table-column>
       <el-table-column
         label="Semester 1">
         <template slot-scope="scope">
-          <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
+          <el-form status-icon :model="scope.row" :rules="rules1">
+            <el-form-item prop="grades">
+              <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
+            </el-form-item>
+          </el-form>
         </template>
       </el-table-column>
       <el-table-column
         label="Semester 2">
         <template slot-scope="scope">
-          <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
+          <el-form status-icon :model="scope.row" :rules="rules2">
+            <el-form-item prop="grades">
+              <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
+            </el-form-item>
+          </el-form>
         </template>
       </el-table-column>
       <el-table-column
@@ -106,6 +122,14 @@ function getPointValue(grade, level) {
 
 export default {
   data() {
+    function validator(rule, value, cb) {
+      console.log(value);
+      // run cb with no parameters for no error
+      if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value))cb();
+      // run cb with an error to show an error
+      cb(new Error("Enter letter or percentage"));
+    }
+
     return {
       tableData: [{
         name: '',
@@ -122,6 +146,8 @@ export default {
         value: 5,
         label: 'Advanced'
       }],
+      rules1: {grades: [{validator: (rule, value, cb) => validator(rule, value[0], cb), trigger: 'blur'}]},
+      rules2: {grades: [{validator: (rule, value, cb) => validator(rule, value[1], cb), trigger: 'blur'}]},
     }
   },
   methods: {
@@ -212,5 +238,11 @@ export default {
 
 .el-icon-right {
   padding-left: 12px;
+}
+
+.el-form-item {
+  margin: 0;
+  padding-bottom: 1.2em;
+  padding-top: 1.2em;
 }
 </style>
