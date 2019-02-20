@@ -26,13 +26,13 @@
       <el-table-column
         label="Semester 1">
         <template slot-scope="scope">
-          <el-input placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
+          <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
         </template>
       </el-table-column>
       <el-table-column
         label="Semester 2">
         <template slot-scope="scope">
-          <el-input placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
+          <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
         </template>
       </el-table-column>
       <el-table-column
@@ -55,24 +55,35 @@
 // Get the number of points to subtract from 4/4.5/5 based on grade
 function getPointValue(grade, level) {
   let loss = 0;
+  // Set level to core if not set
+  if (level === '') {
+    level = 4
+  }
+  // Remove % sign if present
+  grade = grade.replace('%', '');
   // Convert grade to number if possible
   grade = isNaN(Number(grade)) ? grade : Number(grade);
   if (typeof grade === "string") {
     grade = grade.toUpperCase();
     switch (grade) {
       case "A":
+      case "a":
         loss = 0;
         break;
       case "B":
+      case "b":
         loss = 1;
         break;
       case "C":
+      case "c":
         loss = 2;
         break;
       case "D":
+      case "d":
         loss = 3;
         break;
       case "F":
+      case "f":
         return 0;
       default:
         return -1;
@@ -154,9 +165,14 @@ export default {
             return;
           }
           // Add class and point value
-          classes += multiplier;
-          weightedPoints += getPointValue(grade, element.level) * multiplier;
-          unweightedPoints += getPointValue(grade, 4) * multiplier;
+          let points = [getPointValue(grade, element.level) * multiplier, getPointValue(grade, 4) * multiplier];
+          if (points[0] !== -1) {
+            classes += multiplier;
+            weightedPoints += getPointValue(grade, element.level) * multiplier;
+          }
+          if (points[1] !== -1) {
+            unweightedPoints += getPointValue(grade, 4) * multiplier;
+          }
         });
       });
 
