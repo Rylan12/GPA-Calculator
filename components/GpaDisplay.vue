@@ -28,14 +28,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../assets/main";
+
 .grade-display {
+  height: $footer-height;
   width: 100%;
   background-color: white;
   position: fixed;
   bottom: 0;
   border-top: solid #ebeef5 1px;
   z-index: 99;
-  padding: 10px;
 }
 </style>

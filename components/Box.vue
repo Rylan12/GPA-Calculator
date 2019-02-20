@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 .box {
-  padding: 10px;
+  padding: 6px 15px 15px;
   width: 155px;
   text-align: center;
   float: left;

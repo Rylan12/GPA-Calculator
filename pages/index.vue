@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <el-container>
       <el-main>
         <h1 class="title">
@@ -9,7 +9,6 @@
           By Rylan Polster
         </h2>
         <grade-table @change="$set(gpa, 0, $event)"/>
-        <div class="spacer"></div>
       </el-main>
     </el-container>
     <gpa-display :weighted="gpa[0][0]" :unweighted="gpa[0][1]"/>
@@ -33,7 +32,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "../assets/main";
+
 .title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
   'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -52,7 +53,11 @@ export default {
   padding-bottom: 15px;
 }
 
-.spacer {
-  height: 140px;
+.container {
+  margin-bottom: $footer-height;
+}
+
+main {
+  padding-bottom: 0 !important;
 }
 </style>
