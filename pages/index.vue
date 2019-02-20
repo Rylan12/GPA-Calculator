@@ -9,6 +9,7 @@
           By Rylan Polster
         </h2>
         <grade-table @change="$set(gpa, 0, $event)"/>
+        <div class="spacer"></div>
       </el-main>
     </el-container>
     <gpa-display :weighted="gpa[0][0]" :unweighted="gpa[0][1]"/>
@@ -49,5 +50,9 @@ export default {
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
+}
+
+.spacer {
+  height: 140px;
 }
 </style>
