@@ -43,6 +43,9 @@ export default {
   font-size: 100px;
   color: #35495e;
   letter-spacing: 1px;
+  @media only screen and (max-width: $mobile-width) {
+    font-size: 40px;
+  }
 }
 
 .subtitle {
@@ -51,6 +54,9 @@ export default {
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
+  @media only screen and (max-width: $mobile-width) {
+    font-size: 25px;
+  }
 }
 
 .container {

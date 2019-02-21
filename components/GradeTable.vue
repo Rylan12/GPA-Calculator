@@ -4,8 +4,7 @@
       :data="tableData"
       style="width: 100%">
       <el-table-column
-        label="Class"
-        width="180">
+        label="Class">
         <template slot-scope="scope">
           <el-form>
             <el-form-item>
@@ -34,7 +33,7 @@
       <el-table-column
         label="Semester 1">
         <template slot-scope="scope">
-          <el-form status-icon :model="scope.row" :rules="rules1">
+          <el-form :model="scope.row" :rules="rules1">
             <el-form-item prop="grades">
               <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
             </el-form-item>
@@ -44,7 +43,7 @@
       <el-table-column
         label="Semester 2">
         <template slot-scope="scope">
-          <el-form status-icon :model="scope.row" :rules="rules2">
+          <el-form :model="scope.row" :rules="rules2">
             <el-form-item prop="grades">
               <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
             </el-form-item>
