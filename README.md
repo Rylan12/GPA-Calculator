@@ -1,6 +1,8 @@
-# GPA
+# GPA Calculator
 
-> GPA Calculator
+A GPA Calculator designed for High School students; specifically for Shaker Heights.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e57beb86-cc18-49d5-aad2-c2e9db6440f0/deploy-status)](https://app.netlify.com/sites/gpa-calculator-rylanpolster/deploys)
 
 ## Build Setup
 
