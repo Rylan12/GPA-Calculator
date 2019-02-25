@@ -1,5 +1,12 @@
 <template>
   <div>
+    <el-alert
+      title="Enter a letter grade or percentage"
+      type="error"
+      :closable="false"
+      show-icon
+      v-if="!valid">
+    </el-alert>
     <el-row :gutter="20">
       <div v-for="(row, index) in tableData">
         <el-col :xs="11" :sm="9" :md="9" :lg="9" :xl="9">
@@ -112,7 +119,7 @@ export default {
       // run cb with no parameters for no error
       if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value)) cb();
       // run cb with an error to show an error
-      cb(new Error("Enter letter or percentage"));
+      cb(new Error(" "));
     }
 
     return {
@@ -133,6 +140,7 @@ export default {
       }],
       rules1: {grades: [{validator: (rule, value, cb) => validator(rule, value[0], cb), trigger: 'blur'}]},
       rules2: {grades: [{validator: (rule, value, cb) => validator(rule, value[1], cb), trigger: 'blur'}]},
+      valid: true,
     }
   },
   methods: {
@@ -203,11 +211,23 @@ export default {
     },
   },
   watch: {
-    gpa() {
-      this.$emit("change", this.gpa);
+    gpa(gpa) {
+      this.$emit("change", gpa);
     },
-    formData() {
-
+    tableData: {
+      handler() {
+        const data = [];
+        const dataCount = this.$refs.form.length;
+        this.$refs.form.forEach(form => {
+          form.validate(valid => {
+            data.push(valid);
+            if (data.length === dataCount) {
+              this.valid = !data.some(ele => !ele);
+            }
+          })
+        })
+      },
+      deep: true
     },
   },
 }
