@@ -1,24 +1,25 @@
 <template>
   <div>
-    <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        label="Class">
-        <template slot-scope="scope">
+    <el-alert
+      title="Enter a letter grade or percentage"
+      type="error"
+      :closable="false"
+      show-icon
+      v-if="!valid">
+    </el-alert>
+    <el-row :gutter="20">
+      <div v-for="(row, index) in tableData">
+        <el-col :xs="11" :sm="9" :md="9" :lg="9" :xl="9">
           <el-form>
             <el-form-item>
-              <el-input placeholder="Class name" v-model="scope.row.name"></el-input>
+              <el-input placeholder="Class name" v-model="row.name"></el-input>
             </el-form-item>
           </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Level">
-        <template slot-scope="scope">
+        </el-col>
+        <el-col :xs="13" :sm="6" :md="6" :lg="6" :xl="6">
           <el-form>
             <el-form-item>
-              <el-select v-model="scope.row.level" filterable placeholder="Level">
+              <el-select v-model="row.level" filterable placeholder="Level">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -28,37 +29,29 @@
               </el-select>
             </el-form-item>
           </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Semester 1">
-        <template slot-scope="scope">
-          <el-form :model="scope.row" :rules="rules1">
+        </el-col>
+        <el-col :xs="11" :sm="4" :md="4" :lg="4" :xl="4">
+          <el-form :model="row" :rules="rules1" ref="form">
             <el-form-item prop="grades">
-              <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[0]"></el-input>
+              <el-input class="grade-input" placeholder="Semester 1 Grade" v-model="row.grades[0]"></el-input>
             </el-form-item>
           </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Semester 2">
-        <template slot-scope="scope">
-          <el-form :model="scope.row" :rules="rules2">
+        </el-col>
+        <el-col :xs="11" :sm="4" :md="4" :lg="4" :xl="4">
+          <el-form :model="row" :rules="rules2" ref="form">
             <el-form-item prop="grades">
-              <el-input class="grade-input" placeholder="Grade" v-model="scope.row.grades[1]"></el-input>
+              <el-input class="grade-input" placeholder="Semester 2 Grade" v-model="row.grades[1]"></el-input>
             </el-form-item>
           </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label=""
-        width="50">
-        <template slot-scope="scope">
-          <el-button type="danger" icon="el-icon-minus" circle size="mini" @click="remove(scope.$index)"
-                     :disabled="tableData.length === 1"></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </el-col>
+        <el-col :xs="2" :sm="1" :md="1" :lg="1" :xl="1">
+          <div class="remove-button-wrapper">
+            <el-button type="danger" icon="el-icon-minus" circle size="mini" @click="remove(index)"
+                       :disabled="tableData.length === 1"></el-button>
+          </div>
+        </el-col>
+      </div>
+    </el-row>
     <div class="add">
       <el-button class="add-button" type="primary" @click="add">Add Class <i class="el-icon-plus el-icon-right"></i>
       </el-button>
@@ -122,11 +115,11 @@ function getPointValue(grade, level) {
 export default {
   data() {
     function validator(rule, value, cb) {
-      console.log(value);
+      // console.log(value);
       // run cb with no parameters for no error
-      if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value))cb();
+      if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value)) cb();
       // run cb with an error to show an error
-      cb(new Error("Enter letter or percentage"));
+      cb(new Error(" "));
     }
 
     return {
@@ -147,14 +140,15 @@ export default {
       }],
       rules1: {grades: [{validator: (rule, value, cb) => validator(rule, value[0], cb), trigger: 'blur'}]},
       rules2: {grades: [{validator: (rule, value, cb) => validator(rule, value[1], cb), trigger: 'blur'}]},
+      valid: true,
     }
   },
   methods: {
     handleEdit(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
     },
     handleDelete(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
     },
     add() {
       this.tableData.push({
@@ -207,24 +201,41 @@ export default {
           (Math.round(weightedPoints / classes * 1000) / 1000),
           (Math.round(unweightedPoints / classes * 1000) / 1000)
         ];
-        console.log(gpa);
+        // console.log(gpa);
         return gpa
       }
 
       // Return empty if no classes
-      console.log("None");
+      // console.log("None");
       return [null, null];
     },
   },
   watch: {
-    gpa() {
-      this.$emit("change", this.gpa);
+    gpa(gpa) {
+      this.$emit("change", gpa);
+    },
+    tableData: {
+      handler() {
+        const data = [];
+        const dataCount = this.$refs.form.length;
+        this.$refs.form.forEach(form => {
+          form.validate(valid => {
+            data.push(valid);
+            if (data.length === dataCount) {
+              this.valid = !data.some(ele => !ele);
+            }
+          })
+        })
+      },
+      deep: true
     },
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$row-height: 50px;
+
 .add-button {
   margin-right: 12px;
 }
@@ -241,7 +252,35 @@ export default {
 
 .el-form-item {
   margin: 0;
-  padding-bottom: 1.2em;
-  padding-top: 1.2em;
+}
+
+.el-select {
+  width: 100%;
+}
+
+.el-row * {
+  margin-bottom: 5px;
+}
+
+.el-alert {
+  margin-bottom: 1em;
+}
+
+.el-form-item.is-success /deep/ .el-input__inner {
+  border: 1px solid #dcdfe6;
+
+  &:hover {
+    border: 1px solid #c0c4cc;
+  }
+}
+
+.remove-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.el-col {
+  height: $row-height;
 }
 </style>
