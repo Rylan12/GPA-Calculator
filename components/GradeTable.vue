@@ -115,7 +115,7 @@ function getPointValue(grade, level) {
 export default {
   data() {
     function validator(rule, value, cb) {
-      console.log(value);
+      // console.log(value);
       // run cb with no parameters for no error
       if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value)) cb();
       // run cb with an error to show an error
@@ -145,10 +145,10 @@ export default {
   },
   methods: {
     handleEdit(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
     },
     handleDelete(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
     },
     add() {
       this.tableData.push({
@@ -201,12 +201,12 @@ export default {
           (Math.round(weightedPoints / classes * 1000) / 1000),
           (Math.round(unweightedPoints / classes * 1000) / 1000)
         ];
-        console.log(gpa);
+        // console.log(gpa);
         return gpa
       }
 
       // Return empty if no classes
-      console.log("None");
+      // console.log("None");
       return [null, null];
     },
   },
