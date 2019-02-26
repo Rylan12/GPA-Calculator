@@ -69,29 +69,26 @@ function getPointValue(grade, level) {
   }
   // Remove % sign if present
   grade = grade.replace('%', '');
+  grade = grade.replace('+', '');
+  grade = grade.replace('-', '');
   // Convert grade to number if possible
   grade = isNaN(Number(grade)) ? grade : Number(grade);
   if (typeof grade === "string") {
     grade = grade.toUpperCase();
     switch (grade) {
       case "A":
-      case "a":
         loss = 0;
         break;
       case "B":
-      case "b":
         loss = 1;
         break;
       case "C":
-      case "c":
         loss = 2;
         break;
       case "D":
-      case "d":
         loss = 3;
         break;
       case "F":
-      case "f":
         return 0;
       default:
         return -1;
@@ -117,7 +114,7 @@ export default {
     function validator(rule, value, cb) {
       // console.log(value);
       // run cb with no parameters for no error
-      if (value.length === 0 || /^([ABCDF]|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value)) cb();
+      if (value.length === 0 || /^([ABCDF][+-]?|((\.\d+)|(\d+\.?\d*)%?))$/i.test(value)) cb();
       // run cb with an error to show an error
       cb(new Error(" "));
     }
